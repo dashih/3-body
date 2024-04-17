@@ -141,5 +141,12 @@ document.body.addEventListener('keypress', function (event) {
     }
 });
 
+document.addEventListener('touchstart', function(event) {
+    if (event.touches.length > 1) {
+        randomize();
+        startSimulation();
+    }
+});
+
 // Initial setup
 camera.position.z = 100;
