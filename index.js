@@ -1,9 +1,11 @@
-// Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+
+const bodyRadius = 1;
+var isDone = false;
 
 // Bodies
 const bodies = [{
@@ -27,7 +29,7 @@ const bodies = [{
 ];
 
 // Create spheres
-const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
+const sphereGeometry = new THREE.SphereGeometry(bodyRadius, 32, 32);
 const spheres = bodies.map(body => {
     const sphereMaterial = new THREE.MeshBasicMaterial({
         color: body.color
@@ -64,10 +66,25 @@ function update() {
         // Update sphere position
         spheres[i].position.copy(body.position);
     }
+
+    // Collision detection
+    for (let i = 0; i < bodies.length; i++) {
+        for (let j = 0; j < bodies.length; j++) {
+            if (i !== j) {
+                const distance = bodies[j].position.clone().sub(bodies[i].position).length();
+                if (distance < bodyRadius * 2) {
+                    isDone = true;
+                    document.getElementById('status').innerText = 'Collision';
+                }
+            }
+        }
+    }
 }
 
 // Start simulation
 function startSimulation() {
+    isDone = false;
+    document.getElementById('status').innerText = 'Running';
     document.getElementById('control-panel').style.display = 'none';
     document.getElementById('hidden-panel').style.display = 'block';
 
@@ -88,6 +105,15 @@ function startSimulation() {
 
     // Start the animation loop
     animate();
+}
+
+// Render loop
+function animate() {
+    if (!isDone) {
+        requestAnimationFrame(animate);
+        update();
+        renderer.render(scene, camera);
+    }
 }
 
 // Randomize positions and velocities
@@ -119,13 +145,6 @@ function randomize() {
 function showPanel() {
     document.getElementById('control-panel').style.display = 'block';
     document.getElementById('hidden-panel').style.display = 'none';
-}
-
-// Render loop
-function animate() {
-    requestAnimationFrame(animate);
-    update();
-    renderer.render(scene, camera);
 }
 
 document.body.addEventListener('keypress', function (event) {

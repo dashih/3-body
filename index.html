@@ -13,6 +13,8 @@
 
 <body>
   <div id="control-panel" class="control-panel">
+    <label>3-Body Simulation v2.0.0</label>
+    <hr />
     <label>Gravitational Constant: <input type="number" id="gravConst" value="0.0001"></label><br>
     <hr />
     <div class="red">
@@ -47,11 +49,12 @@
     <hr />
     <button onclick="randomize()">Randomize</button>
     <button onclick="startSimulation()">Start</button>
-    <label>'s' to start. 'n' or double-tap to randomize and start</label>
+    <label>'s' to start. 'n' or 2-finger tap to randomize and start</label>
   </div>
 
   <div id="hidden-panel" class="hidden-panel">
     <button onclick="showPanel()">Show controls</button>
+    <label id="status"></label>
   </div>
 
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script> -->
