@@ -31,7 +31,7 @@ const bodies = [{
 // Create spheres
 const sphereGeometry = new THREE.SphereGeometry(bodyRadius, 32, 32);
 const spheres = bodies.map(body => {
-    const sphereMaterial = new THREE.MeshBasicMaterial({
+    const sphereMaterial = new THREE.MeshStandardMaterial({
         color: body.color
     });
     const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
@@ -39,6 +39,11 @@ const spheres = bodies.map(body => {
     scene.add(sphere);
     return sphere;
 });
+
+// Directional light emanating from camera position
+const light = new THREE.DirectionalLight(0xffffff);
+light.position.set(0, 0, 1);
+scene.add(light);
 
 // Update function
 function update() {
