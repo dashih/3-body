@@ -108,6 +108,8 @@ function startSimulation() {
         bodies[i].velocity.set(parseFloat(vxInput.value), parseFloat(vyInput.value), parseFloat(vzInput.value));
     }
 
+    camera.position.z = parseFloat(document.getElementById('camDepth').value);
+
     // Start the animation loop
     animate();
 }
@@ -171,6 +173,3 @@ document.addEventListener('touchstart', function(event) {
         startSimulation();
     }
 });
-
-// Initial setup
-camera.position.z = 100;

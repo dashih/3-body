@@ -8,6 +8,7 @@ canvas {
 
 .control-panel {
     position: absolute;
+    font-family: monospace;
     top: 10px;
     left: 10px;
     background-color: rgba(255, 255, 255, 0.8);
@@ -19,6 +20,7 @@ canvas {
 .hidden-panel {
     display: none;
     position: absolute;
+    font-family: monospace;
     top: 5px;
     left: 5px;
     background-color: rgba(255, 255, 255, 0.8);
