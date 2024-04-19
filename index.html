@@ -13,7 +13,7 @@
 
 <body>
   <div id="control-panel" class="control-panel">
-    <label><b>3-Body Simulation v3.2.1</b></label>
+    <label><b>3-Body Simulation v4.0.0</b></label>
     <hr />
     <label>Gravitational Constant: <input type="number" id="gravConst" value="0.0001"></label><br>
     <label>Camera depth: <input type="number" id="camDepth" value="100"></label>
@@ -51,6 +51,10 @@
     <button onclick="randomize()">Randomize</button>
     <button onclick="startSimulation()">Start</button>
     <label>'n' or 2-finger tap to randomize and start. 's' to start with current settings.</label>
+    <hr />
+    <b>N-body simulation</b><br>
+    <label>Bodies: <input type="number" id="nBodies" value="1000"></label>
+    <button onclick="startNBody()">N-body</button>
   </div>
 
   <div id="hidden-panel" class="hidden-panel">

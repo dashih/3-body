@@ -6,9 +6,10 @@ document.body.appendChild(renderer.domElement);
 
 const bodyRadius = 1;
 var isDone = false;
+var collisionDetectionEnabled = true;
 
 // Bodies
-const bodies = [{
+var bodies = [{
     mass: 0,
     position: new THREE.Vector3(0, 0, 0),
     velocity: new THREE.Vector3(0, 0, 0),
@@ -30,7 +31,7 @@ const bodies = [{
 
 // Create spheres
 const sphereGeometry = new THREE.SphereGeometry(bodyRadius, 32, 32);
-const spheres = bodies.map(body => {
+var spheres = bodies.map(body => {
     const sphereMaterial = new THREE.MeshStandardMaterial({
         color: body.color
     });
@@ -73,22 +74,34 @@ function update() {
     }
 
     // Collision detection
-    for (let i = 0; i < bodies.length; i++) {
-        for (let j = 0; j < bodies.length; j++) {
-            if (i !== j) {
-                const distance = bodies[j].position.clone().sub(bodies[i].position).length();
-                if (distance < bodyRadius * 2) {
-                    isDone = true;
-                    document.getElementById('status').innerText = 'Collision';
+    if (collisionDetectionEnabled) {
+        for (let i = 0; i < bodies.length; i++) {
+            for (let j = 0; j < bodies.length; j++) {
+                if (i !== j) {
+                    const distance = bodies[j].position.clone().sub(bodies[i].position).length();
+                    if (distance < bodyRadius * 2) {
+                        isDone = true;
+                        document.getElementById('status').innerText = 'Collision';
+                    }
                 }
             }
         }
     }
 }
 
+// Render loop
+function animate() {
+    if (!isDone) {
+        requestAnimationFrame(animate);
+        update();
+        renderer.render(scene, camera);
+    }
+}
+
 // Start simulation
 function startSimulation() {
     isDone = false;
+    collisionDetectionEnabled = true;
     document.getElementById('status').innerText = 'Running';
     document.getElementById('control-panel').style.display = 'none';
     document.getElementById('hidden-panel').style.display = 'block';
@@ -114,24 +127,67 @@ function startSimulation() {
     animate();
 }
 
-// Render loop
-function animate() {
-    if (!isDone) {
-        requestAnimationFrame(animate);
-        update();
-        renderer.render(scene, camera);
+function startNBody() {
+    const camPosition = 200;
+
+    // Delete the three hardcoded bodies (leaving the light)
+    scene.remove(scene.children[0]);
+    scene.remove(scene.children[0]);
+    scene.remove(scene.children[0]);
+
+    // Generate bodies
+    const numBodies = document.getElementById('nBodies').value;
+    bodies = [];
+    for (let i = 0; i < numBodies; i++) {
+        bodies.push({
+            mass: 1000,
+            position: generateRandomPosition(camPosition / 2),
+            velocity: new THREE.Vector3(0, 0, 0),
+            color: 0xffffff
+        });
     }
+
+    // Create spheres
+    spheres = bodies.map(body => {
+        // Lambert is more performant than Standard
+        const sphereMaterial = new THREE.MeshLambertMaterial({
+            color: body.color
+        });
+        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        sphere.position.copy(body.position);
+        scene.add(sphere);
+        return sphere;
+    });
+
+    isDone = false;
+    collisionDetectionEnabled = false;
+    document.getElementById('control-panel').style.display = 'none';
+
+    camera.position.z = camPosition;
+    animate();
+}
+
+function generateRandomPosition(range) {
+    let x = Math.random() * range;
+    let y = Math.random() * range;
+    let z = Math.random() * range;
+    return new THREE.Vector3(
+        Math.random() < 0.5 ? x : x * -1,
+        Math.random() < 0.5 ? y : y * -1,
+        Math.random() < 0.5 ? z : z * -1);
 }
 
 // Randomize positions and velocities
 function randomize() {
     for (let i = 0; i < bodies.length; i++) {
-        const x = Math.random() * 100 - 50;
-        const y = Math.random() * 100 - 50;
-        const z = Math.random() * 100 - 50;
-        const vx = Math.random() * 0.2 - 0.1;
-        const vy = Math.random() * 0.2 - 0.1;
-        const vz = Math.random() * 0.2 - 0.1;
+        const camDepth = parseFloat(document.getElementById('camDepth').value);
+        const r = generateRandomPosition(camDepth / 3);
+        const x = r.x;
+        const y = r.y;
+        const z = r.z;
+        const vx = Math.random() * 0.3 - 0.1;
+        const vy = Math.random() * 0.3 - 0.1;
+        const vz = Math.random() * 0.3 - 0.1;
 
         const xInput = document.getElementById(`x${i + 1}`);
         const yInput = document.getElementById(`y${i + 1}`);
