@@ -181,13 +181,15 @@ function generateRandomPosition(range) {
 function randomize() {
     for (let i = 0; i < bodies.length; i++) {
         const camDepth = parseFloat(document.getElementById('camDepth').value);
-        const r = generateRandomPosition(camDepth / 3);
-        const x = r.x;
-        const y = r.y;
-        const z = r.z;
-        const vx = Math.random() * 0.3 - 0.1;
-        const vy = Math.random() * 0.3 - 0.1;
-        const vz = Math.random() * 0.3 - 0.1;
+        const rPos = generateRandomPosition(camDepth / 3);
+        const x = rPos.x;
+        const y = rPos.y;
+        // Making z positive gives a better chance of keeping the entities in view, making for a better show.
+        const z = Math.abs(rPos.z);
+        const rV = generateRandomPosition(0.2);
+        const vx = rV.x;
+        const vy = rV.y;
+        const vz = rV.z;
 
         const xInput = document.getElementById(`x${i + 1}`);
         const yInput = document.getElementById(`y${i + 1}`);
